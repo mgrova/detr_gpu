@@ -11,7 +11,7 @@ import torchvision.transforms as T
 torch.set_grad_enabled(False)
 
 # Image path to detect
-url = '/home/grvc/Downloads/photo5974074985481876075.jpg'
+video_id = 0
 use_matplotlib = True
 
 
@@ -39,8 +39,8 @@ transform = T.Compose([
 ])
 
 if not(use_matplotlib):
-    cv2.namedWindow("preview")
-cap = cv2.VideoCapture(0)
+    cv2.namedWindow("detection")
+cap = cv2.VideoCapture(video_id)
 
 if cap.isOpened(): # try to get the first frame
     rval, frame = cap.read()
@@ -56,14 +56,13 @@ while rval:
     im = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
     start = time.time()
     scores, boxes = detect(im, detr, transform, dev)
-    end = time.time()
     print("FPS: ", 1.0 / (time.time() - start)) # FPS = 1 / time to process loop
 
     if use_matplotlib:
         plot_results_dyn(plt, im, scores, boxes)
     else:
         im2 = plot_bboxes_cv2(im, scores, boxes)
-        cv2.imshow("preview", im2)
+        cv2.imshow("detection", im2)
 
     rval, frame = cap.read()
     key = cv2.waitKey(20)
@@ -76,4 +75,4 @@ if use_matplotlib:
     plt.ioff()
     plt.show()
 else:
-    cv2.destroyWindow("preview")
+    cv2.destroyWindow("detection")

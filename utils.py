@@ -155,10 +155,8 @@ def plot_segmentation_masks(image):
     panoptic_seg[:, :, :] = 0
     for id in range(panoptic_seg_id.max() + 1):
         panoptic_seg[panoptic_seg_id == id] = np.asarray(next(palette)) * 255
-    plt.figure(figsize=(15,15))
-    plt.imshow(panoptic_seg)
-    plt.axis('off')
-    plt.show()
+
+    return panoptic_seg
 
 # ----------------------------------------------------------------------------------
 def plot_segmentation_masks_beauty(result, image):
@@ -181,9 +179,7 @@ def plot_segmentation_masks_beauty(result, image):
     v = Visualizer(np.array(image.copy().resize((final_w, final_h)))[:, :, ::-1], meta, scale=1.0)
     v._default_font_size = 20
     v = v.draw_panoptic_seg_predictions(panoptic_seg, segments_info, area_threshold=0)
-    print('\nClose figure using "Enter" pls')
-    cv2.imshow("panoptic",v.get_image())
-    cv2.waitKey(0)
-    cv2.destroyWindow("panoptic")
+    
+    return v.get_image()
 
 # ----------------------------------------------------------------------------------

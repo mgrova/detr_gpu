@@ -11,6 +11,7 @@ torch.set_grad_enabled(False)
 
 # Image path to segment
 url = '/home/grvc/Downloads/photo5974074985481876075.jpg'
+plot_beauty = True
 
 # Configure GPU support
 if torch.cuda.is_available():  
@@ -56,12 +57,22 @@ scores = out["pred_logits"].softmax(-1)[..., :-1].max(-1)[0]
 # threshold the confidence
 keep = scores > 0.85
 
-# Print mask that detr segment individually
+# DEBUG -- Print mask that DETR segment individually
 #plot_masks_subplot(out,keep)
 
 # the post-processor expects as input the target size of the predictions (which we set here to the image size)
 result = postprocessor(out, torch.as_tensor(img.shape[-2:]).unsqueeze(0).cuda())[0]
 
 # Plot all masks together
-#plot_segmentation_masks(result)
-plot_segmentation_masks_beauty(result, im)
+if plot_beauty:
+  segm_img = plot_segmentation_masks_beauty(result, im)
+  print('\nClose figure using "Enter" pls')
+  cv2.imshow("panoptic",segm_img)
+  cv2.waitKey(0)
+  cv2.destroyWindow("panoptic")
+else:
+  panoptic_img = plot_segmentation_masks(result)
+  plt.figure(figsize=(15,15))
+  plt.imshow(panoptic_img)
+  plt.axis('off')
+  plt.show()
