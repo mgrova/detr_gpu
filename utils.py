@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
+import cv2
 import torch
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 # COCO classes
 CLASSES = [
@@ -68,3 +69,24 @@ def plot_results(pil_img, prob, boxes):
                 bbox=dict(facecolor='yellow', alpha=0.5))
     plt.axis('off')
     plt.show()
+
+def plot_bboxes(pil_img, prob, boxes):
+
+    numpy_image=np.array(pil_img)  
+
+    # convert to a openCV2 image, notice the COLOR_RGB2BGR which means that 
+    # the color is converted from RGB to BGR format
+    opencv_image=cv2.cvtColor(numpy_image, cv2.COLOR_RGB2BGR) 
+    
+    for p, (xmin, ymin, xmax, ymax), c in zip(prob, boxes.tolist(), COLORS * 100):
+        init_pt = (int(xmin),int(xmax))
+        end_pt = (int(xmax - xmin), int(ymax - ymin))
+        c1 = [int(x*255) for x in c]
+        
+        cv2.rectangle(opencv_image, init_pt, end_pt, c1, 3)
+        cl = p.argmax()
+        text = f'{CLASSES[cl]}: {p[cl]:0.2f}'
+        cv2.putText(opencv_image, text,init_pt,cv2.FONT_HERSHEY_COMPLEX,0.5,c1,1)
+        #ax.text(xmin, ymin, text, fontsize=15,
+        #        bbox=dict(facecolor='yellow', alpha=0.5))
+    return opencv_image
