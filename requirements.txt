@@ -1,0 +1,3 @@
+git+https://github.com/cocodataset/panopticapi.git
+detectron2==0.1.3 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.5/index.html
+pyyaml 

@@ -11,7 +11,6 @@ torch.set_grad_enabled(False)
 # Image path to detect
 url = '/home/grvc/Downloads/photo5974074985481876075.jpg'
 
-
 # Configure GPU support
 if torch.cuda.is_available():  
   dev = "cuda:0" 
