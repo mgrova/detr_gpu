@@ -2,16 +2,15 @@
 
 from detr import DETRsimple
 from utils import *
-
 from PIL import Image
 import time
-
 import torch
 import torchvision.transforms as T
 torch.set_grad_enabled(False)
 
 # Image path to detect
 url = '/home/grvc/Downloads/photo5974074985481876075.jpg'
+
 
 # Configure GPU support
 if torch.cuda.is_available():  

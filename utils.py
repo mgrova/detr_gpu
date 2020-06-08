@@ -70,7 +70,20 @@ def plot_results(pil_img, prob, boxes):
     plt.axis('off')
     plt.show()
 
-def plot_bboxes(pil_img, prob, boxes):
+def plot_results_dyn(plt, pil_img, prob, boxes):
+    ax = plt.gca()
+    for p, (xmin, ymin, xmax, ymax), c in zip(prob, boxes.tolist(), COLORS * 100):
+        ax.add_patch(plt.Rectangle((xmin, ymin), xmax - xmin, ymax - ymin,
+                                   fill=False, color=c, linewidth=3))
+        cl = p.argmax()
+        text = f'{CLASSES[cl]}: {p[cl]:0.2f}'
+        ax.text(xmin, ymin, text, fontsize=15,
+                bbox=dict(facecolor='yellow', alpha=0.5))
+    plt.imshow(pil_img)
+    plt.pause(0.0001)
+    plt.clf()
+
+def plot_bboxes_cv2(pil_img, prob, boxes):
 
     numpy_image=np.array(pil_img)  
 
@@ -87,6 +100,4 @@ def plot_bboxes(pil_img, prob, boxes):
         cl = p.argmax()
         text = f'{CLASSES[cl]}: {p[cl]:0.2f}'
         cv2.putText(opencv_image, text,init_pt,cv2.FONT_HERSHEY_COMPLEX,0.5,c1,1)
-        #ax.text(xmin, ymin, text, fontsize=15,
-        #        bbox=dict(facecolor='yellow', alpha=0.5))
     return opencv_image

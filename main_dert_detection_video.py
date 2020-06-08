@@ -12,6 +12,8 @@ torch.set_grad_enabled(False)
 
 # Image path to detect
 url = '/home/grvc/Downloads/photo5974074985481876075.jpg'
+use_matplotlib = True
+
 
 # Configure GPU support
 if torch.cuda.is_available():  
@@ -36,7 +38,8 @@ transform = T.Compose([
     T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
-cv2.namedWindow("preview")
+if not(use_matplotlib):
+    cv2.namedWindow("preview")
 cap = cv2.VideoCapture(0)
 
 if cap.isOpened(): # try to get the first frame
@@ -44,30 +47,33 @@ if cap.isOpened(): # try to get the first frame
 else:
     rval = False
 
+if use_matplotlib:
+    plt.figure(figsize=(16,10))
+    plt.imshow(frame)
+    plt.ion()
+
 while rval:
     im = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
     start = time.time()
     scores, boxes = detect(im, detr, transform, dev)
     end = time.time()
-    print('Detection time: '+ str(end - start) + ' sec')
-    im2 = plot_bboxes(im, scores, boxes)
+    print("FPS: ", 1.0 / (time.time() - start)) # FPS = 1 / time to process loop
 
-    cv2.imshow("preview", im2)
+    if use_matplotlib:
+        plot_results_dyn(plt, im, scores, boxes)
+    else:
+        im2 = plot_bboxes_cv2(im, scores, boxes)
+        cv2.imshow("preview", im2)
 
     rval, frame = cap.read()
     key = cv2.waitKey(20)
     if key == 27: # exit on ESC
         break
+
 cap.release()
-cv2.destroyWindow("preview")
 
-# # Load image
-# im = Image.open(url)
-# 
-# # Detect in image and measure time
-# start = time.time()
-# scores, boxes = detect(im, detr, transform, dev)
-# end = time.time()
-# print('Detection time: '+ str(end - start) + ' sec')
-
-#Plot results of detection    
+if use_matplotlib:
+    plt.ioff()
+    plt.show()
+else:
+    cv2.destroyWindow("preview")
